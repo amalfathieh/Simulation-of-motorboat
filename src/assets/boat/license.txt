@@ -1,0 +1,11 @@
+Model Information:
+* title:	Boat
+* source:	https://sketchfab.com/3d-models/boat-dc676eac5985450a9271f9b31eb47778
+* author:	Firdaus Sahak (https://sketchfab.com/firdaussahak)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Boat" (https://sketchfab.com/3d-models/boat-dc676eac5985450a9271f9b31eb47778) by Firdaus Sahak (https://sketchfab.com/firdaussahak) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
