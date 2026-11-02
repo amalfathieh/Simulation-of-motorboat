@@ -278,7 +278,9 @@ updateEnviromentVariables() {
     '________________________________'+ '<br><br>' +
     '    totalForce (' + this.totalForce().x.toFixed(1) + ', ' + this.totalForce().y.toFixed(1) + ', ' + this.totalForce().z.toFixed(1) + ') N' + '<br><br>'+ 
     '    Wind force (' + this.windForce().x.toFixed(0) + ', ' + this.windForce().y.toFixed(0)  + ' , ' + this.windForce().z.toFixed(0) + ') N' + '<br><br>' +
-    '    Water Force (' + this.CurrentInducedForce().x.toFixed(0) + ', ' + this.CurrentInducedForce().y.toFixed(0)  + ' , ' + this.CurrentInducedForce().z.toFixed(0) + ') N' + '<br><br>' }
+    '    Water Force (' + this.CurrentInducedForce().x.toFixed(0) + ', ' + this.CurrentInducedForce().y.toFixed(0)  + ' , ' + this.CurrentInducedForce().z.toFixed(0) + ') N' + '<br><br>' +
+    '    b0003 (' + this.buoyancyForce().x.toFixed(0) + ', ' + this.buoyancyForce().y.toFixed(0)  + ' , ' + this.buoyancyForce().z.toFixed(0) + ') N' + '<br><br>' +
+    '    gr (' + this.gravityForce().x.toFixed(0) + ', ' + this.gravityForce().y.toFixed(0)  + ' , ' + this.gravityForce().z.toFixed(0) + ') N' + '<br><br>' }
 
 }
 export default Ph;

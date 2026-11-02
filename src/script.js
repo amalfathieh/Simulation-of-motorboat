@@ -33,6 +33,7 @@ class Boat {
 
   update() {
     if (this.boatModel) {
+      
       physic.updateRotation();
       physic.update();
       this.boatModel.position.y = physic.position.y;
