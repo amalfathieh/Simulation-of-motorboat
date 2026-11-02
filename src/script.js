@@ -1,5 +1,3 @@
-import * as dat from 'dat.gui';
-
 import "./style.css";
 
 import * as THREE from "three";
