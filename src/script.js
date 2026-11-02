@@ -19,7 +19,7 @@ const loader = new GLTFLoader();
 const physic = new Sh();
 class Boat {
   constructor() {
-    loader.load("./assets/tow_boat.glb" , (gltf) => {
+    loader.load("/assets/tow_boat.glb" , (gltf) => {
       scene.add(gltf.scene);
       gltf.scene.scale.set(12, 12, 12);
       gltf.scene.position.set(1, -0.5, 50);
@@ -174,7 +174,7 @@ function init() {
     textureWidth: 512,
     textureHeight: 512,
     waterNormals: new THREE.TextureLoader().load(
-      "./assets/waternormals.jpg",
+      "/assets/waternormals.jpg",
       function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }
