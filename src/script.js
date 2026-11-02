@@ -44,7 +44,7 @@ class Boat {
 
       // xc = physic.position.x + 20 * Math.sin(physic.rotation.y + 180);
       // zc = physic.position.z + 200 * Math.cos(physic.rotation.y + 180);
-      camera.position.set(physic.position.x, 30, physic.position.z -100);
+      // camera.position.set(physic.position.x, 30, physic.position.z -100);
       // camera.lookAt(xv , 0 ,zv);
       // xv = physic.position.x * (Math.sin(physic.rotation.y ));
       // zv = physic.position.z *(Math.cos(physic.rotation.y ));
