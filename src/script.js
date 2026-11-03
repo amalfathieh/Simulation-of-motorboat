@@ -1,5 +1,5 @@
 import "./style.css";
-import * as dat from 'dat.gui';
+import * as dat from "dat.gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Water } from "three/examples/jsm/objects/Water.js";
@@ -19,7 +19,7 @@ const loader = new GLTFLoader();
 const physic = new Sh();
 class Boat {
   constructor() {
-    loader.load("/assets/tow_boat.glb" , (gltf) => {
+    loader.load("/assets/tow_boat.glb", (gltf) => {
       scene.add(gltf.scene);
       gltf.scene.scale.set(12, 12, 12);
       gltf.scene.position.set(1, -0.5, 50);
@@ -33,13 +33,10 @@ class Boat {
 
   update() {
     if (this.boatModel) {
-      
       physic.updateRotation();
       physic.update();
-      this.boatModel.position.y = physic.position.y;
-      this.boatModel.position.y += 6;
+      this.boatModel.position.y = physic.position.y + 6;
       this.boatModel.position.x = physic.position.x;
-
       this.boatModel.position.z = physic.position.z;
 
       // xc = physic.position.x + 20 * Math.sin(physic.rotation.y + 180);
@@ -51,6 +48,20 @@ class Boat {
       physic.updateEnviromentVariables();
 
       this.boatModel.rotation.y = physic.rotation.y;
+
+      // --- متابعة الكاميرا للقارب ---
+      const offsetDistance = 100; // المسافة خلف القارب
+      const offsetHeight = 30; // ارتفاع الكاميرا
+
+      const boatX = this.boatModel.position.x;
+      const boatZ = this.boatModel.position.z;
+      const boatRotY = this.boatModel.rotation.y;
+
+      const camX = boatX - offsetDistance * Math.sin(boatRotY);
+      const camZ = boatZ - offsetDistance * Math.cos(boatRotY);
+
+      camera.position.set(camX, offsetHeight, camZ);
+      camera.lookAt(boatX, this.boatModel.position.y, boatZ);
       //----------------------------------رسم اشعة القوة------------------------------------
       // // ازرق الدفع
       // DrawVector(
@@ -116,14 +127,14 @@ function DrawVector(
   vector3,
   color,
   lengthOfVector,
-  startingPointOfVector
+  startingPointOfVector,
 ) {
   var dir = new THREE.Vector3(vector3.x, vector3.y, vector3.z);
   dir.normalize();
   var origin = new THREE.Vector3(
     startingPointOfVector.x,
     startingPointOfVector.y,
-    startingPointOfVector.z
+    startingPointOfVector.z,
   );
   var length = lengthOfVector;
   var hex = color;
@@ -157,7 +168,7 @@ function init() {
     95,
     window.innerWidth / window.innerHeight,
     1,
-    20000
+    20000,
   );
   // camera.position.set(-10000, 500, 150);
 
@@ -177,7 +188,7 @@ function init() {
       "/assets/waternormals.jpg",
       function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      }
+      },
     ),
     sunDirection: new THREE.Vector3(),
     sunColor: 0xffffff,
