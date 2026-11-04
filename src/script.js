@@ -35,33 +35,40 @@ class Boat {
     if (this.boatModel) {
       physic.updateRotation();
       physic.update();
+
+      // ----------- فحص الاصطدام مع العوائق (الجزر) -----------
+      const boatRadius = 15; // عدّل هالرقم حسب حجم القارب الفعلي تقريباً
+
+      for (const obs of obstacles) {
+        const dx = physic.position.x - obs.position.x;
+        const dz = physic.position.z - obs.position.z;
+        let dist = Math.sqrt(dx * dx + dz * dz);
+        const minDist = boatRadius + obs.radius;
+
+        if (dist < minDist) {
+          if (dist === 0) dist = 0.001; // تجنب القسمة على صفر
+          // ادفع القارب للخارج على حافة الدائرة بدل ما يدخل جوا الجزيرة
+          const pushX = (dx / dist) * minDist;
+          const pushZ = (dz / dist) * minDist;
+          physic.position.x = obs.position.x + pushX;
+          physic.position.z = obs.position.z + pushZ;
+        }
+      }
+      // --------------------------------------------------------
+
       this.boatModel.position.y = physic.position.y + 6;
       this.boatModel.position.x = physic.position.x;
       this.boatModel.position.z = physic.position.z;
-
-      // xc = physic.position.x + 20 * Math.sin(physic.rotation.y + 180);
-      // zc = physic.position.z + 200 * Math.cos(physic.rotation.y + 180);
-      // camera.position.set(physic.position.x, 30, physic.position.z -100);
-      // camera.lookAt(xv , 0 ,zv);
-      // xv = physic.position.x * (Math.sin(physic.rotation.y ));
-      // zv = physic.position.z *(Math.cos(physic.rotation.y ));
       physic.updateEnviromentVariables();
 
       this.boatModel.rotation.y = physic.rotation.y;
 
-      // --- متابعة الكاميرا للقارب ---
-      const offsetDistance = 100; // المسافة خلف القارب
-      const offsetHeight = 30; // ارتفاع الكاميرا
-
-      const boatX = this.boatModel.position.x;
-      const boatZ = this.boatModel.position.z;
-      const boatRotY = this.boatModel.rotation.y;
-
-      const camX = boatX - offsetDistance * Math.sin(boatRotY);
-      const camZ = boatZ - offsetDistance * Math.cos(boatRotY);
-
-      camera.position.set(camX, offsetHeight, camZ);
-      camera.lookAt(boatX, this.boatModel.position.y, boatZ);
+      // تحديث هدف الكاميرا ليتبع القارب (OrbitControls هو اللي بيحسب الموقع الفعلي)
+      controls.target.set(
+        this.boatModel.position.x,
+        this.boatModel.position.y,
+        this.boatModel.position.z,
+      );
       //----------------------------------رسم اشعة القوة------------------------------------
       // // ازرق الدفع
       // DrawVector(
@@ -116,9 +123,41 @@ class Boat {
     }
   }
 }
+const obstacles = [];
+
+class Island {
+  constructor(modelPath, x, y, z, scale = 1, collisionRadius = null) {
+    this.position = new THREE.Vector3(x, y, z);
+    loader.load(modelPath, (gltf) => {
+      gltf.scene.scale.set(scale, scale, scale);
+      gltf.scene.position.set(x, y, z);
+      scene.add(gltf.scene);
+      this.model = gltf.scene;
+
+      // حساب نصف قطر الاصطدام تلقائياً من حجم الموديل الفعلي بعد الـ scale
+      if (collisionRadius) {
+        this.radius = collisionRadius;
+      } else {
+        const box = new THREE.Box3().setFromObject(this.model);
+        const size = box.getSize(new THREE.Vector3());
+        this.radius = Math.max(size.x, size.z) / 2;
+      }
+
+      obstacles.push(this); // تسجيلها كعائق فعّال بعد التحميل
+    });
+  }
+}
 
 const boat = new Boat();
 
+// الجزيرة
+const island = new Island(
+  "/assets/low-poly_floating_island_and_rocks.glb", // أو low-poly_floating_island_and_rocks.glb
+  300, // x
+  -0, // y
+  600, // z
+  3000, // scale
+);
 //-------------------------------------تابع رسم اشعة القوة---------------------------------------
 
 const arrowHelper = [];
@@ -170,7 +209,6 @@ function init() {
     1,
     20000,
   );
-  // camera.position.set(-10000, 500, 150);
 
   /////////////////////////////////////////////////////////////////////////////////////////////
   camera.position.set(0, 30, -120);
@@ -249,6 +287,8 @@ function init() {
   updateSun();
 
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.495;
   controls.target.set(0, 10, 0);
   controls.minDistance = 40.0;
@@ -289,12 +329,9 @@ function onWindowResize() {
 
 function animate() {
   requestAnimationFrame(animate);
-  render();
-  // xc = physic.position.x + 20 * Math.sin(physic.rotation.y + 180);
-  // zc = physic.position.z + 200 * Math.cos(physic.rotation.y + 180);
-  // camera.position.set(xc, 30, zc);
-  // camera.lookAt(xv, 0, zv);
   boat.update();
+  controls.update(); // لازم تنفذ بعد تحديث target كل فريم
+  render();
 }
 
 function render() {
